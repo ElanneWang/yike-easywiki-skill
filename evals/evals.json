@@ -1,0 +1,121 @@
+{
+  "skill_name": "yike-easywiki-skill",
+  "evals": [
+    {
+      "id": 1,
+      "name": "personal-wiki-basic",
+      "prompt": "我想搭建一个知识库，整理我日常看到的文章和播客，但不知道怎么开始。",
+      "expected_output": "Agent 激活 yike-easywiki-skill，开始场景识别，判断为场景一后读取 scenario-1.md 执行访谈",
+      "files": [],
+      "assertions": [
+        "Agent 识别到用户的知识库搭建意图并激活 skill",
+        "Agent 提出场景识别问题（给自己用还是给别人看）",
+        "Agent 没有一次性抛出所有问题，而是分步提问",
+        "Agent 尝试获取内容种子"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "org-wiki-sales-director",
+      "prompt": "我是销售总监，我想把我的销售经验整理成知识库给我的下属看，他们老是问我同样的客户问题，我想让他们能自己查。",
+      "expected_output": "Agent 识别为场景二，开始受众与目的访谈，追问受众具体角色和协作方式",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景二（组织共享知识库）",
+        "Agent Read 了 references/scenario-2.md",
+        "Agent 从受众与目的开始访谈，而非直接给目录结构",
+        "Agent 追问了受众的具体角色（不是泛泛地说'团队'）"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "personal-wiki-second-brain",
+      "prompt": "我想搭建一个自己的第二大脑，平时看了很多公众号文章和播客，但看完就忘了，想系统整理一下。",
+      "expected_output": "Agent 识别为场景一，开始信息消费访谈，追问具体信源和内容种子",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景一（个人知识库）",
+        "Agent Read 了 references/scenario-1.md",
+        "Agent 追问了具体的信源渠道和内容种子",
+        "Agent 提到产出目标，引导用户思考知识库的最终用途"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ambiguous-note-organizing",
+      "prompt": "我平时记了很多笔记在各种地方，备忘录、微信收藏、飞书文档里都有，感觉特别乱，想找个方式系统管理一下。",
+      "expected_output": "Agent 识别到知识管理意图并激活 skill，通过场景识别问题判断是个人还是组织场景",
+      "files": [],
+      "assertions": [
+        "Agent 识别到'系统管理笔记'背后的知识库搭建意图",
+        "Agent 激活了 yike-easywiki-skill 而非直接给整理建议",
+        "Agent 提出场景识别问题来区分个人 vs 组织",
+        "Agent 没有直接跳到工具推荐或整理方法"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "mixed-scenario-ceo",
+      "prompt": "我是公司CEO，一方面我自己需要持续学习行业知识保持判断力，另一方面我想把我的战略思考和管理经验沉淀下来给核心团队看，省得每次开会都要从头讲。",
+      "expected_output": "Agent 识别为混合场景，引导用户选择优先场景，而非硬选一个",
+      "files": [],
+      "assertions": [
+        "Agent 识别到用户同时有个人积累和团队共享两种需求",
+        "Agent 没有直接选一个场景，而是引导用户选择优先级",
+        "Agent 提出类似'如果只能先做一个，你先做哪个'的引导问题",
+        "Agent 在选定主场景后提到会为另一个场景预留扩展空间"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "should-not-trigger-article-writing",
+      "prompt": "帮我写一篇关于 AI 赋能电商行业的深度分析文章，要有数据支撑和案例。",
+      "expected_output": "Agent 不应激活 yike-easywiki-skill，这是内容创作请求而非知识库搭建请求",
+      "files": [],
+      "assertions": [
+        "Agent 没有激活 yike-easywiki-skill",
+        "Agent 直接处理写作请求而非启动知识库访谈流程"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "boss-second-brain-basic",
+      "prompt": "我们创始人商业架构能力很强，但他用的概念特别抽象，员工根本听不懂，每次开会他都要从头解释一遍他的框架。重要的事也必须他在场才能拍板。我想把他的判断体系沉淀下来，变成团队可以直接用的东西。",
+      "expected_output": "Agent 识别为场景三（老板第二大脑），Read references/scenario-3.md，从问题定位开始访谈，追问老板专属词表和决策案例",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景三（决策分身型），而非场景二（知识主角是一把手而非专家本人）",
+        "Agent Read 了 references/scenario-3.md",
+        "Agent 从问题定位（病症在哪）开始访谈，而非直接给目录结构",
+        "Agent 追问员工最常误解的老板概念（专属词表，误解高发优先）",
+        "Agent 追问最近的重要决策或否决案例，挖掘情境/备选/排除理由/反向条件四字段"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "second-brain-owner-disambiguation",
+      "prompt": "我想给老板建一个第二大脑。他思路快但特别跳，团队跟不上他的节奏，什么都得他亲自拍板，他不在事情就停。",
+      "expected_output": "Agent 识别为场景三而非场景一——第二大脑的主人是老板不是用户自己，且病症指向决策依赖本人",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景三（区分点：大脑的主人是谁）",
+        "Agent 没有把'第二大脑'直接路由到场景一",
+        "Agent 识别'拍板依赖本人在场'指向决策规则层（decisions/ + cases/）",
+        "Agent 追问最近一次否决下属提案的案例（决策规则的富矿）"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "boss-excel-framework-edge-case",
+      "prompt": "我老板习惯用一套 Excel 表管理他的生意思考，很多分页和自造的词，除了他没人看得懂。他让我把这些整理成知识库给管理层用。",
+      "expected_output": "Agent 识别为场景三，按边界情况处理：Excel 表头和分表结构当作概念体系骨架优先拆解；访谈对象非老板本人，原话栏标注转述并进校验清单",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景三",
+        "Agent 把 Excel 的表头和分表结构当作概念体系骨架优先拆解（scenario-3.md 边界情况）",
+        "Agent 意识到访谈对象不是老板本人，概念页原话栏需标注转述并挂 verification.md 等确认",
+        "Agent 追问哪些词管理层最看不懂（误解高发概念优先建页）"
+      ]
+    }
+  ]
+}

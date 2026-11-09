@@ -1,0 +1,26 @@
+# Media files (too large for git)
+*.mp3
+*.mp4
+*.wav
+*.m4a
+*.flac
+*.avi
+*.mov
+*.mkv
+
+# Images (if large)
+# *.png
+# *.jpg
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Obsidian
+.obsidian/
