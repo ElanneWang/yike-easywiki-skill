@@ -17,6 +17,8 @@ if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
     echo "Pass extra directories as additional arguments based on interview results."
     echo "For the boss scenario, pass raw/meetings, raw/dictations, raw/artifacts,"
     echo "wiki/methodology, wiki/conversations etc. as extra dirs when needed."
+    echo ""
+    echo "wiki/index.md is pre-trimmed to common slots plus the current scenario's slots."
     exit 1
 fi
 
@@ -59,7 +61,17 @@ find "$PROJECT_PATH" -type d -empty -exec touch {}/.gitkeep \;
 cp "$SKILL_DIR/assets/bootstrap-agents.md" "$PROJECT_PATH/AGENTS.md"
 cp "$SKILL_DIR/assets/readme-template.md" "$PROJECT_PATH/README.md"
 cp "$SKILL_DIR/assets/gitignore-template" "$PROJECT_PATH/.gitignore"
-cp "$SKILL_DIR/assets/index-template.md" "$PROJECT_PATH/wiki/index.md"
+# 索引按场景裁剪：保留通用分类 + 当前场景专属分类，移除其他场景的槽位
+awk -v sc="$SCENARIO" '
+    /^<!--SCENARIO:[a-z]+-->$/ {
+        tag = $0
+        gsub(/<!--SCENARIO:|-->/, "", tag)
+        skip = (tag != sc)
+        next
+    }
+    /^<!--\/SCENARIO-->$/ { skip = 0; next }
+    !skip { print }
+' "$SKILL_DIR/assets/index-template.md" > "$PROJECT_PATH/wiki/index.md"
 cp "$SKILL_DIR/assets/log-template.md" "$PROJECT_PATH/wiki/log.md"
 
 echo ""
