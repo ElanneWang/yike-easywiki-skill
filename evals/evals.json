@@ -116,6 +116,75 @@
         "Agent 意识到访谈对象不是老板本人，概念页原话栏需标注转述并挂 verification.md 等确认",
         "Agent 追问哪些词管理层最看不懂（误解高发概念优先建页）"
       ]
+    },
+    {
+      "id": 10,
+      "name": "project-workspace-basic",
+      "prompt": "我同时推着五六个客户项目，会议记录散在飞书、微信和本地文件夹里，新人接手要挨个问一遍，我自己也经常记不清上次跟客户到底定了什么。",
+      "expected_output": "Agent 识别为场景四（项目协作型），Read references/scenario-4.md，锁定一个正在推的项目开始访谈，而不是先盘点项目数量",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景四（知识的主角是在办的事，不是可复用经验）",
+        "Agent Read 了 references/scenario-4.md",
+        "Agent 没有先让用户列全部项目，而是要求锁定一个当前在推的项目",
+        "Agent 追问这个项目的起点（客户最初给了什么资料）与过程（几次会、有没有转写）",
+        "Agent 对用户提供的信息给出归属或缺口判断（如资料该进 01-项目上下文、缺少会议原文）"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "org-vs-project-disambiguation",
+      "prompt": "我想把做过的几个项目的经验整理出来，让团队以后接同类客户能直接照着做，别再各自踩一遍坑。",
+      "expected_output": "Agent 识别为场景二（协作预审型）而非场景四——知识是可复用经验，跨项目仍然成立",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景二（判据：这条知识明年做别的项目还用得上）",
+        "Agent 没有因为出现'项目'一词就路由到场景四",
+        "Agent Read 了 references/scenario-2.md",
+        "Agent 追问受众是谁、在什么环节会用到这套经验",
+        "Agent 引导用户把经验抽象成规范/检查清单/术语表，而不是建项目工作区"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "project-no-transcript-edge-case",
+      "prompt": "我手上项目七八个，但从来不留会议记录，开完会自己记个结论就完了。现在想建个知识库管一管项目状态。",
+      "expected_output": "Agent 识别为场景四，按边界情况处理：指出没有原文会导致过程不可追溯，建议从下一次会开始存原文，先归档当前状态并标 compiled_through",
+      "files": [],
+      "assertions": [
+        "Agent 识别为场景四并说明它保存的是过程，不是任务状态",
+        "Agent 明确指出'只有结论没有过程'会削弱追溯能力（references/scenario-4.md 边界情况）",
+        "Agent 建议从下一次会议开始保留原文，并给出转写/纪要的具体做法",
+        "Agent 提出先归档当前状态并标注 compiled_through 日期，不回填历史",
+        "Agent 没有承诺能凭结论还原出决策过程"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "open-scenario-basic",
+      "prompt": "我想给我家的老房子建个档案，水电改造、家电保修、装修合同、维修记录全散在微信和相册里，以后要找个东西特别麻烦。",
+      "expected_output": "Agent 判断前四类都不匹配，走场景五；先问目的和背景，再给判断，然后推导 2-4 个顶层分类并让用户选，不预建 concepts/cases",
+      "files": [],
+      "assertions": [
+        "Agent 没有直接套用前四场景的目录结构",
+        "Agent Read 了 references/scenario-5.md",
+        "Agent 先问目的、现状和三个真实例子，而不是先宣布'这是开放场景'",
+        "Agent 给出 2-3 个候选顶层结构（如按时间/按设备/按房间）让用户选择，而非直接建目录",
+        "Agent 说明只保留三条底线（raw 只增不改、页面可回溯来源、index 与实况一致）"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "open-should-route-to-org",
+      "prompt": "我们三个人做设计外包，我想把每个项目报价怎么算、验收标准、踩过的坑都记下来，以后接新活直接能用，不用每次都重新想。",
+      "expected_output": "Agent 先问目的和背景，然后判断这是场景二（可复用、给同事用），建议回退并说明理由，而不是直接按开放场景建库",
+      "files": [],
+      "assertions": [
+        "Agent 先访谈目的与使用场景，再给场景判断（场景五的顺序：先访谈后判断）",
+        "Agent 判断为场景二并说明理由（经验跨项目复用）",
+        "Agent 明确建议改走场景二，同时说明用户坚持自己的结构也可以",
+        "Agent 没有直接按开放场景生成目录或 AGENTS.md"
+      ]
     }
   ]
 }

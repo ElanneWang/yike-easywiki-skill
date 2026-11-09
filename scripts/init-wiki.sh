@@ -6,13 +6,17 @@ SCENARIO="$2"
 SKILL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
-    echo "Usage: bash init-wiki.sh <project-path> <scenario: personal|organizational|boss> [extra-dirs...]"
+    echo "Usage: bash init-wiki.sh <project-path> <scenario: personal|organizational|boss|project|open> [project-name|extra-dirs...]"
     echo "Example: bash init-wiki.sh ~/my-wiki personal raw/podcasts wiki/entities"
+    echo "Example: bash init-wiki.sh ~/project-hub project 欧奇密码-儿童营养"
+    echo "Example: bash init-wiki.sh ~/my-library open records notes"
     echo ""
     echo "Base directories created by scenario:"
     echo "  personal:       raw/, wiki/, wiki/concepts/, wiki/cases/"
     echo "  organizational: raw/, wiki/, wiki/concepts/, wiki/cases/, wiki/outputs/"
     echo "  boss:           raw/, wiki/, wiki/concepts/, wiki/cases/, wiki/decisions/"
+    echo "  project:        raw/, wiki/, projects/ (third arg = first project name, copies project template)"
+    echo "  open:           raw/, wiki/ (top-level categories come from the interview; pass them as extra dirs)"
     echo ""
     echo "Pass extra directories as additional arguments based on interview results."
     echo "For the boss scenario, pass raw/meetings, raw/dictations, raw/artifacts,"
@@ -22,8 +26,8 @@ if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
     exit 1
 fi
 
-if [ "$SCENARIO" != "personal" ] && [ "$SCENARIO" != "organizational" ] && [ "$SCENARIO" != "boss" ]; then
-    echo "Error: scenario must be 'personal', 'organizational' or 'boss'"
+if [ "$SCENARIO" != "personal" ] && [ "$SCENARIO" != "organizational" ] && [ "$SCENARIO" != "boss" ] && [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "open" ]; then
+    echo "Error: scenario must be 'personal', 'organizational', 'boss', 'project' or 'open'"
     exit 1
 fi
 
@@ -35,9 +39,11 @@ echo ""
 mkdir -p "$PROJECT_PATH"/raw
 mkdir -p "$PROJECT_PATH"/wiki
 
-# Create essential wiki subdirectories
-mkdir -p "$PROJECT_PATH"/wiki/concepts
-mkdir -p "$PROJECT_PATH"/wiki/cases
+# Create essential wiki subdirectories (scenario 4/5 organize by project or by user-defined categories, not by knowledge type)
+if [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "open" ]; then
+    mkdir -p "$PROJECT_PATH"/wiki/concepts
+    mkdir -p "$PROJECT_PATH"/wiki/cases
+fi
 
 if [ "$SCENARIO" = "organizational" ]; then
     mkdir -p "$PROJECT_PATH"/wiki/outputs
@@ -47,8 +53,18 @@ if [ "$SCENARIO" = "boss" ]; then
     mkdir -p "$PROJECT_PATH"/wiki/decisions
 fi
 
+mkdir -p "$PROJECT_PATH"/wiki
+if [ "$SCENARIO" = "project" ]; then
+    mkdir -p "$PROJECT_PATH"/projects
+fi
+
 # Create extra directories passed as arguments (based on interview results)
 shift 2
+FIRST_PROJECT=""
+if [ "$SCENARIO" = "project" ] && [ -n "$1" ]; then
+    FIRST_PROJECT="$1"
+    shift
+fi
 for dir in "$@"; do
     mkdir -p "$PROJECT_PATH"/"$dir"
     echo "  + extra dir: $dir"
@@ -70,9 +86,20 @@ awk -v sc="$SCENARIO" '
         next
     }
     /^<!--\/SCENARIO-->$/ { skip = 0; next }
+    /^<!--COMMON-->$/ { skip = (sc == "project" || sc == "open"); next }
+    /^<!--\/COMMON-->$/ { skip = 0; next }
     !skip { print }
 ' "$SKILL_DIR/assets/index-template.md" > "$PROJECT_PATH/wiki/index.md"
 cp "$SKILL_DIR/assets/log-template.md" "$PROJECT_PATH/wiki/log.md"
+
+# project 场景：复制首个项目骨架，每个项目目录自包含
+if [ "$SCENARIO" = "project" ] && [ -n "$FIRST_PROJECT" ]; then
+    TARGET="$PROJECT_PATH/projects/$FIRST_PROJECT"
+    mkdir -p "$TARGET"
+    cp -r "$SKILL_DIR/assets/project-template/." "$TARGET/"
+    mkdir -p "$TARGET/01-项目上下文/01-客户原始资料" "$TARGET/01-项目上下文/02-我方调研" "$TARGET/01-项目上下文/03-资料解读与映射"
+    echo "  + project skeleton: projects/$FIRST_PROJECT"
+fi
 
 echo ""
 echo "✓ Base directory structure created"
