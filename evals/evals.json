@@ -21,7 +21,7 @@
       "expected_output": "Agent 识别为场景二，开始受众与目的访谈，追问受众具体角色和协作方式",
       "files": [],
       "assertions": [
-        "Agent 正确识别为场景二（组织共享知识库）",
+        "Agent 正确识别为场景二（业务专家型）",
         "Agent Read 了 references/scenario-2.md",
         "Agent 从受众与目的开始访谈，而非直接给目录结构",
         "Agent 追问了受众的具体角色（不是泛泛地说'团队'）"
@@ -135,7 +135,7 @@
       "id": 11,
       "name": "org-vs-project-disambiguation",
       "prompt": "我想把做过的几个项目的经验整理出来，让团队以后接同类客户能直接照着做，别再各自踩一遍坑。",
-      "expected_output": "Agent 识别为场景二（协作预审型）而非场景四——知识是可复用经验，跨项目仍然成立",
+      "expected_output": "Agent 识别为场景二（业务专家型）而非场景四——知识是可复用经验，跨项目仍然成立",
       "files": [],
       "assertions": [
         "Agent 正确识别为场景二（判据：这条知识明年做别的项目还用得上）",
@@ -163,11 +163,11 @@
       "id": 13,
       "name": "open-scenario-basic",
       "prompt": "我想给我家的老房子建个档案，水电改造、家电保修、装修合同、维修记录全散在微信和相册里，以后要找个东西特别麻烦。",
-      "expected_output": "Agent 判断前四类都不匹配，走场景五；先问目的和背景，再给判断，然后推导 2-4 个顶层分类并让用户选，不预建 concepts/cases",
+      "expected_output": "Agent 判断前五类都不匹配，走场景六；先问目的和背景，再给判断，然后推导 2-4 个顶层分类并让用户选，不预建 concepts/cases",
       "files": [],
       "assertions": [
-        "Agent 没有直接套用前四场景的目录结构",
-        "Agent Read 了 references/scenario-5.md",
+        "Agent 没有直接套用前五场景的目录结构",
+        "Agent Read 了 references/scenario-6.md",
         "Agent 先问目的、现状和三个真实例子，而不是先宣布'这是开放场景'",
         "Agent 给出 2-3 个候选顶层结构（如按时间/按设备/按房间）让用户选择，而非直接建目录",
         "Agent 说明只保留三条底线（raw 只增不改、页面可回溯来源、index 与实况一致）"
@@ -180,10 +180,39 @@
       "expected_output": "Agent 先问目的和背景，然后判断这是场景二（可复用、给同事用），建议回退并说明理由，而不是直接按开放场景建库",
       "files": [],
       "assertions": [
-        "Agent 先访谈目的与使用场景，再给场景判断（场景五的顺序：先访谈后判断）",
+        "Agent 先访谈目的与使用场景，再给场景判断（场景六的顺序：先访谈后判断）",
         "Agent 判断为场景二并说明理由（经验跨项目复用）",
         "Agent 明确建议改走场景二，同时说明用户坚持自己的结构也可以",
         "Agent 没有直接按开放场景生成目录或 AGENTS.md"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "department-wiki-basic",
+      "prompt": "我们部门十来个人，制度和模板散在三个网盘里，新人来了全靠问人，还经常有人照着两年前的旧版执行，出了事谁也说不清当时为什么这么定。",
+      "expected_output": "Agent 识别为场景五（部门共建型），按六类内容目录组织，要求每条内容带 status/owner/review_by，并说明业务线用 domain 字段而非目录",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景五（多人共建 + 版本治理），不是场景二",
+        "Agent Read 了 references/scenario-5.md",
+        "Agent 追问部门职能块、现在靠什么找东西、最常被问的五个问题、哪些必须遵守",
+        "Agent 给出 01-制度 到 06-培训 加 99-归档 的六类结构，并解释按判断动作切分",
+        "Agent 要求每条内容带 type/status/owner/review_by，缺一项视为不完整",
+        "Agent 说明业务线不作目录、用 domain 字段，避免空目录"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "expert-vs-department-disambiguation",
+      "prompt": "我是交付负责人，验收标准我一个人定，就想把我这套判断写清楚，让销售和客户自己看，不用每次都来找我确认。",
+      "expected_output": "Agent 识别为场景二（业务专家型）而非场景五——单点权威、一个人定别人执行，不需要部门版本治理",
+      "files": [],
+      "assertions": [
+        "Agent 正确识别为场景二（判据：一个人定、别人执行）",
+        "Agent 没有因为出现'部门''标准'就路由到场景五",
+        "Agent Read 了 references/scenario-2.md",
+        "Agent 追问受众是谁、在哪个环节会用到、有没有正反案例",
+        "Agent 给出 concepts/cases/outputs 的结构，而不是六类部门目录"
       ]
     }
   ]

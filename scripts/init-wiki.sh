@@ -6,7 +6,7 @@ SCENARIO="$2"
 SKILL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
-    echo "Usage: bash init-wiki.sh <project-path> <scenario: personal|organizational|boss|project|open> [project-name|extra-dirs...]"
+    echo "Usage: bash init-wiki.sh <project-path> <scenario: personal|organizational|boss|project|department|open> [project-name|extra-dirs...]"
     echo "Example: bash init-wiki.sh ~/my-wiki personal raw/podcasts wiki/entities"
     echo "Example: bash init-wiki.sh ~/project-hub project 欧奇密码-儿童营养"
     echo "Example: bash init-wiki.sh ~/my-library open records notes"
@@ -17,6 +17,7 @@ if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
     echo "  boss:           raw/, wiki/, wiki/concepts/, wiki/cases/, wiki/decisions/"
     echo "  project:        raw/, wiki/, projects/ (third arg = first project name, copies project template)"
     echo "  open:           raw/, wiki/ (top-level categories come from the interview; pass them as extra dirs)"
+    echo "  department:     raw/, wiki/, wiki/01-制度 ... wiki/06-培训, wiki/99-归档"
     echo ""
     echo "Pass extra directories as additional arguments based on interview results."
     echo "For the boss scenario, pass raw/meetings, raw/dictations, raw/artifacts,"
@@ -26,8 +27,8 @@ if [ -z "$PROJECT_PATH" ] || [ -z "$SCENARIO" ]; then
     exit 1
 fi
 
-if [ "$SCENARIO" != "personal" ] && [ "$SCENARIO" != "organizational" ] && [ "$SCENARIO" != "boss" ] && [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "open" ]; then
-    echo "Error: scenario must be 'personal', 'organizational', 'boss', 'project' or 'open'"
+if [ "$SCENARIO" != "personal" ] && [ "$SCENARIO" != "organizational" ] && [ "$SCENARIO" != "boss" ] && [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "department" ] && [ "$SCENARIO" != "open" ]; then
+    echo "Error: scenario must be 'personal', 'organizational', 'boss', 'project', 'department' or 'open'"
     exit 1
 fi
 
@@ -39,10 +40,17 @@ echo ""
 mkdir -p "$PROJECT_PATH"/raw
 mkdir -p "$PROJECT_PATH"/wiki
 
-# Create essential wiki subdirectories (scenario 4/5 organize by project or by user-defined categories, not by knowledge type)
-if [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "open" ]; then
+# Create essential wiki subdirectories (scenario 4/5/6 organize by project, content type or user-defined categories, not by knowledge type)
+if [ "$SCENARIO" != "project" ] && [ "$SCENARIO" != "department" ] && [ "$SCENARIO" != "open" ]; then
     mkdir -p "$PROJECT_PATH"/wiki/concepts
     mkdir -p "$PROJECT_PATH"/wiki/cases
+fi
+
+# department 场景：按判断动作分六类 + 归档
+if [ "$SCENARIO" = "department" ]; then
+    for d in "01-制度" "02-流程" "03-标准" "04-模板" "05-案例" "06-培训" "99-归档"; do
+        mkdir -p "$PROJECT_PATH/wiki/$d"
+    done
 fi
 
 if [ "$SCENARIO" = "organizational" ]; then
@@ -86,7 +94,7 @@ awk -v sc="$SCENARIO" '
         next
     }
     /^<!--\/SCENARIO-->$/ { skip = 0; next }
-    /^<!--COMMON-->$/ { skip = (sc == "project" || sc == "open"); next }
+    /^<!--COMMON-->$/ { skip = (sc == "project" || sc == "department" || sc == "open"); next }
     /^<!--\/COMMON-->$/ { skip = 0; next }
     !skip { print }
 ' "$SKILL_DIR/assets/index-template.md" > "$PROJECT_PATH/wiki/index.md"
