@@ -81,11 +81,11 @@ description: >
 
 | 场景 | Reference 文件 | 访谈核心 |
 |------|---------------|---------|
-| 场景一 | `references/scenario-1.md` | 你消费什么、你怎么思考、你想产出什么 |
+| 场景一 | `references/scenario-1.md` | 你消费什么、每类信源怎么拆、你想产出什么 |
 | 场景二 | `references/scenario-2.md` | 你服务谁、协作关系是什么、输入输出是什么 |
 | 场景三 | `references/scenario-3.md` | 老板的词表是什么、怎么拍板、谁的话算数 |
 | 场景四 | `references/scenario-4.md` | 手上正在推的是哪个项目、客户最初给了什么、过程记录在哪 |
-| 场景五 | `references/scenario-5.md` | 部门是干什么的、现在靠什么找东西、最常被问的五个问题、哪些必须遵守 |
+| 场景五 | `references/scenario-5.md` | 部门是干什么的、现在靠什么找东西、最常被问的五个问题、最常用的几类怎么流转、哪些必须遵守 |
 | 场景六 | `references/scenario-6.md` | 目的和背景是什么、三个真实例子、你打算怎么找它 |
 
 ### 访谈节奏
