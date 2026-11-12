@@ -22,6 +22,14 @@ export XHS_COOKIE="你的小红书cookie"     # 提高小红书成功率
 export DEEPSEEK_API_KEY="你的key"        # YouTube翻译/爆款拆解
 ```
 
+**前置检查**：下文各平台的抓取命令都调用 `chubbyskills/<平台>-ingest/scripts/`，这个目录**不在本 skill 内**，是安装器 clone 下来的外部仓库，默认落在 `~/wiki-tools/chubbyskills`。
+
+```bash
+ls ~/wiki-tools/chubbyskills 2>/dev/null || echo "未安装，先跑第 1 步"
+```
+
+目录不存在就按第 1 步安装，或先 `export WORK_DIR=<你的路径>` 再运行安装器，然后把下面命令里的相对路径换成实际路径。不安装也能用：微信公众号那套 `curl` 方案、`transcribe-media.py` 处理本地音视频，都不依赖 `chubbyskills`。
+
 ## 平台获取方式速查
 
 ### 1. 微信公众号
@@ -241,7 +249,7 @@ tags: [标签]
 | `HF_ENDPOINT` | 国内模型下载加速 `=https://hf-mirror.com` | 推荐 |
 | `XHS_COOKIE` | 小红书登录态，提高成功率 | 可选 |
 | `DEEPSEEK_API_KEY` | YouTube翻译、爆款拆解 | 可选 |
-| `WORK_DIR` | chubbyskills 安装路径，默认 `/data/user/work` | 可选 |
+| `WORK_DIR` | chubbyskills 安装路径，默认 `~/wiki-tools` | 可选 |
 
 ## 故障排查
 

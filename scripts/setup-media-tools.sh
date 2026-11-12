@@ -17,7 +17,7 @@
 
 set -e
 
-WORK_DIR="${WORK_DIR:-/data/user/work}"
+WORK_DIR="${WORK_DIR:-$HOME/wiki-tools}"
 CHUBBY_DIR="${CHUBBY_DIR:-$WORK_DIR/chubbyskills}"
 
 echo "🔧 媒体内容获取工具链 - 环境初始化"
